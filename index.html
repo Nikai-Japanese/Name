@@ -10,55 +10,20 @@
             max-width: 500px;
             margin: 0 auto;
             padding: 10px;
+            padding-bottom: 20px;
             background-color: #f4f7f6;
             color: #333;
         }
 
-        /* ランダム指名エリア */
-        .random-box {
-            background: #ffffff;
-            border: 2px solid #3498db;
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-        }
-        .selected-display {
-            font-size: 26px;
-            font-weight: bold;
-            color: #2c3e50;
-            min-height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 8px;
-        }
-        .pick-btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s;
-        }
-        .pick-btn:active {
-            background-color: #2980b9;
-        }
-
-        /* 管理バー（約1.5倍に拡大済み） */
+        /* 管理バー（上部） */
         .header-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             background: #fff;
-            padding: 14px 16px; 
-            border-radius: 6px;
+            padding: 12px 14px; 
+            border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .counter {
@@ -70,14 +35,14 @@
             background-color: #e74c3c;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 8px 14px;
+            border-radius: 6px;
             font-size: 13px;
             font-weight: bold;
             cursor: pointer;
         }
 
-        /* 操作説明の小さなヒント */
+        /* 操作ヒント */
         .hint {
             font-size: 11px;
             color: #7f8c8d;
@@ -85,23 +50,24 @@
             margin-bottom: 8px;
         }
 
-        /* 生徒リスト（縦幅1.5倍に拡大済み） */
+        /* 生徒リスト（上部に配置） */
         .student-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 6px;
+            margin-bottom: 12px;
         }
         .student-card {
             background: white;
-            padding: 14px 10px;
-            border-radius: 6px;
+            padding: 12px 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
             user-select: none;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border-left: 3px solid #3498db;
+            border-left: 4px solid #3498db;
             transition: all 0.2s;
         }
         .student-info {
@@ -129,14 +95,14 @@
         .absent-btn {
             background: #ecf0f1;
             border: none;
-            padding: 6px 9px;
+            padding: 6px 8px;
             border-radius: 4px;
             font-size: 11px;
             color: #7f8c8d;
             cursor: pointer;
             font-weight: bold;
             flex-shrink: 0;
-            margin-left: 5px;
+            margin-left: 4px;
         }
 
         /* 指名済みのスタイル */
@@ -164,17 +130,50 @@
             background: #e74c3c;
             color: white;
         }
+
+        /* 画面一番下：特大指名エリア＆ボタン */
+        .bottom-action-box {
+            background: #ffffff;
+            border: 2px solid #3498db;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        /* 選ばれた人の表示（結果が出た時だけ強調） */
+        .selected-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        /* 片手親指で押しやすい特大ボタン */
+        .pick-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 18px 20px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 3px 8px rgba(52, 152, 219, 0.4);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .pick-btn:active {
+            background-color: #2980b9;
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
 
-    <!-- ランダム指名エリア -->
-    <div class="random-box">
-        <div class="selected-display" id="selectedDisplay">🎲 タップして指名</div>
-        <button class="pick-btn" onclick="pickRandomStudent()">ランダムで指名する</button>
-    </div>
-
-    <!-- カウントとリセット -->
+    <!-- カウントとリセット（最上部） -->
     <div class="header-actions">
         <div class="counter" id="counter">指名済み: 0 / 18 名</div>
         <button class="reset-btn" onclick="resetAll()">一括リセット</button>
@@ -182,9 +181,15 @@
 
     <div class="hint">💡 名前の右端のボタンで「欠席（除外）」にできます</div>
 
-    <!-- 生徒一覧 -->
+    <!-- 生徒一覧（上部に移動） -->
     <div class="student-list" id="studentList">
         <!-- 生徒データ -->
+    </div>
+
+    <!-- 画面一番下：特大ボタンエリア -->
+    <div class="bottom-action-box">
+        <div class="selected-display" id="selectedDisplay"></div>
+        <button class="pick-btn" onclick="pickRandomStudent()">🎲 ランダムで指名する</button>
     </div>
 
     <script>
@@ -325,7 +330,7 @@
                 }
             });
             
-            display.innerText = "🎲 タップして指名";
+            display.innerText = "";
             updateCounter();
         }
 
