@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インドネシア語クラス 指名チェック</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* ランダム指名エリア */
+        .random-box {
+            background: #ffffff;
+            border: 2px solid #3498db;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .selected-display {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .pick-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+        }
+        .pick-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+        }
+        .pick-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* 管理バー */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .counter {
+            font-size: 15px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* 生徒リスト */
+        .student-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+        }
+        .student-card {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            border-left: 4px solid #3498db;
+        }
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .student-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .student-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* 指名済みのスタイル */
+        .student-card.checked {
+            background-color: #e0e0e0;
+            border-left-color: #95a5a6;
+            opacity: 0.6;
+        }
+        .student-card.checked .student-name {
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🇮🇩 指名チェック</h1>
+
+    <!-- ランダム指名機能 -->
+    <div class="random-box">
+        <div class="selected-display" id="selectedDisplay">🎲 ボタンを押してください</div>
+        <button class="pick-btn" onclick="pickRandomStudent()">ランダムで指名する</button>
+    </div>
+
+    <!-- カウントとリセット -->
+    <div class="header-actions">
+        <div class="counter" id="counter">指名済み: 0 / 18 名</div>
+        <button class="reset-btn" onclick="resetAll()">一括リセット</button>
+    </div>
+
+    <!-- 生徒一覧 -->
+    <div class="student-list" id="studentList">
+        <!-- 生徒データ -->
+    </div>
+
+    <script>
+        const students = [
+            { num: "01", name: "Jammy" },
+            { num: "02", name: "Kim" },
+            { num: "03", name: "Tabita" },
+            { num: "04", name: "Sara" },
+            { num: "05", name: "Olivia" },
+            { num: "06", name: "Samuel" },
+            { num: "07", name: "Lisa" },
+            { num: "08", name: "Melati" },
+            { num: "09", name: "Lois" },
+            { num: "10", name: "Puni" },
+            { num: "11", name: "Yiling" },
+            { num: "12", name: "Mawar" },
+            { num: "13", name: "Nora" },
+            { num: "14", name: "Naomi" },
+            { num: "15", name: "Suli" },
+            { num: "16", name: "RUT" },
+            { num: "17", name: "Yani" },
+            { num: "18", name: "Timotius" }
+        ];
+
+        const listContainer = document.getElementById('studentList');
+        const display = document.getElementById('selectedDisplay');
+
+        // 生徒カードの初期生成
+        function renderStudents() {
+            listContainer.innerHTML = '';
+            students.forEach((s, index) => {
+                const card = document.createElement('div');
+                card.className = 'student-card';
+                card.id = `card-${index}`;
+                card.onclick = (e) => toggleCheck(index, e);
+
+                card.innerHTML = `
+                    <input type="checkbox" id="check-${index}" onclick="event.stopPropagation(); toggleCheck(${index}, event);">
+                    <span class="student-name">${s.num}. ${s.name}</span>
+                `;
+                listContainer.appendChild(card);
+            });
+            updateCounter();
+        }
+
+        // チェック切り替え処理
+        function toggleCheck(index, event) {
+            const checkbox = document.getElementById(`check-${index}`);
+            const card = document.getElementById(`card-${index}`);
+            
+            if (event && event.target.tagName !== 'INPUT') {
+                checkbox.checked = !checkbox.checked;
+            }
+
+            if (checkbox.checked) {
+                card.classList.add('checked');
+            } else {
+                card.classList.remove('checked');
+            }
+            updateCounter();
+        }
+
+        // ランダム指名機能（ルーレット効果付き）
+        function pickRandomStudent() {
+            // まだ指名されていない（チェックが入っていない）生徒を抽出
+            const remainingIndices = [];
+            students.forEach((_, index) => {
+                const checkbox = document.getElementById(`check-${index}`);
+                if (!checkbox.checked) {
+                    remainingIndices.push(index);
+                }
+            });
+
+            // 全員指名済みの場合
+            if (remainingIndices.length === 0) {
+                display.innerText = "🎉 全員指名しました！";
+                return;
+            }
+
+            // 簡単なシャッフル演出（名前がパラパラ入れ替わる）
+            let counter = 0;
+            const interval = setInterval(() => {
+                const tempIndex = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
+                display.innerText = `👉 ${students[tempIndex].num}. ${students[tempIndex].name}`;
+                counter++;
+
+                if (counter > 10) {
+                    clearInterval(interval);
+                    // 最終的に選ばれた生徒
+                    const finalIndex = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
+                    const chosen = students[finalIndex];
+                    
+                    display.innerText = `🎯 ${chosen.num}. ${chosen.name}`;
+                    
+                    // 自動的にチェックを入れる
+                    const checkbox = document.getElementById(`check-${finalIndex}`);
+                    checkbox.checked = true;
+                    toggleCheck(finalIndex);
+                }
+            }, 50);
+        }
+
+        // カウント更新
+        function updateCounter() {
+            const checkedCount = document.querySelectorAll('.student-card input:checked').length;
+            document.getElementById('counter').innerText = `指名済み: ${checkedCount} / ${students.length} 名`;
+        }
+
+        // 一括リセット
+        function resetAll() {
+            const checkboxes = document.querySelectorAll('.student-card input[type="checkbox"]');
+            const cards = document.querySelectorAll('.student-card');
+            
+            checkboxes.forEach(cb => cb.checked = false);
+            cards.forEach(card => card.classList.remove('checked'));
+            
+            display.innerText = "🎲 ボタンを押してください";
+            updateCounter();
+        }
+
+        renderStudents();
+    </script>
+
+</body>
+</html>
