@@ -49,12 +49,11 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background-color 0.2s;
             box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
         }
         .pick-btn:hover {
             background-color: #2980b9;
-            transform: translateY(-1px);
         }
         .pick-btn:active {
             transform: translateY(1px);
@@ -141,7 +140,7 @@
 
     <h1>🇮🇩 指名チェック</h1>
 
-    <!-- ランダム指名機能 -->
+    <!-- ランダム指名エリア -->
     <div class="random-box">
         <div class="selected-display" id="selectedDisplay">🎲 ボタンを押してください</div>
         <button class="pick-btn" onclick="pickRandomStudent()">ランダムで指名する</button>
@@ -218,9 +217,9 @@
             updateCounter();
         }
 
-        // ランダム指名機能（ルーレット効果付き）
+        // 瞬時にランダム指名する機能
         function pickRandomStudent() {
-            // まだ指名されていない（チェックが入っていない）生徒を抽出
+            // まだ指名されていない生徒のインデックスを取得
             const remainingIndices = [];
             students.forEach((_, index) => {
                 const checkbox = document.getElementById(`check-${index}`);
@@ -235,27 +234,17 @@
                 return;
             }
 
-            // 簡単なシャッフル演出（名前がパラパラ入れ替わる）
-            let counter = 0;
-            const interval = setInterval(() => {
-                const tempIndex = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
-                display.innerText = `👉 ${students[tempIndex].num}. ${students[tempIndex].name}`;
-                counter++;
-
-                if (counter > 10) {
-                    clearInterval(interval);
-                    // 最終的に選ばれた生徒
-                    const finalIndex = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
-                    const chosen = students[finalIndex];
-                    
-                    display.innerText = `🎯 ${chosen.num}. ${chosen.name}`;
-                    
-                    // 自動的にチェックを入れる
-                    const checkbox = document.getElementById(`check-${finalIndex}`);
-                    checkbox.checked = true;
-                    toggleCheck(finalIndex);
-                }
-            }, 50);
+            // 瞬時に1人を選択
+            const finalIndex = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
+            const chosen = students[finalIndex];
+            
+            // 画面に即座に表示
+            display.innerText = `🎯 ${chosen.num}. ${chosen.name}`;
+            
+            // 自動的にチェックを入れる
+            const checkbox = document.getElementById(`check-${finalIndex}`);
+            checkbox.checked = true;
+            toggleCheck(finalIndex);
         }
 
         // カウント更新
