@@ -15,31 +15,40 @@
             color: #333;
         }
 
-        /* 管理バー（上部） */
+        /* 管理バー（最上部） */
         .header-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
             background: #fff;
-            padding: 12px 14px; 
+            padding: 14px 16px; 
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .counter {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             color: #34495e;
         }
+
+        /* 一括リセットボタン（縦幅1.5倍・横幅画面の約半分） */
         .reset-btn {
             background-color: #e74c3c;
             color: white;
             border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 13px;
+            padding: 14px 12px; /* 縦幅を1.5倍に拡張 */
+            width: 48%;          /* 画面幅の約半分（48%） */
+            border-radius: 8px;
+            font-size: 15px;     /* 文字も大きく見やすく */
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .reset-btn:active {
+            background-color: #c0392b;
+            transform: scale(0.98);
         }
 
         /* 操作ヒント */
@@ -140,7 +149,7 @@
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        /* 選ばれた人の表示（結果が出た時だけ強調） */
+        /* 選ばれた人の表示 */
         .selected-display {
             font-size: 24px;
             font-weight: bold;
@@ -151,7 +160,7 @@
             justify-content: center;
             margin-bottom: 8px;
         }
-        /* 片手親指で押しやすい特大ボタン */
+        /* 特大指名ボタン */
         .pick-btn {
             background-color: #3498db;
             color: white;
@@ -181,7 +190,7 @@
 
     <div class="hint">💡 名前の右端のボタンで「欠席（除外）」にできます</div>
 
-    <!-- 生徒一覧（上部に移動） -->
+    <!-- 生徒一覧（上部） -->
     <div class="student-list" id="studentList">
         <!-- 生徒データ -->
     </div>
