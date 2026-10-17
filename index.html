@@ -2,76 +2,67 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>インドネシア語クラス 指名チェック</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>指名チェック</title>
     <style>
         body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            max-width: 600px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 10px;
             background-color: #f4f7f6;
             color: #333;
         }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            font-size: 20px;
-            margin-bottom: 15px;
-        }
 
-        /* ランダム指名エリア */
+        /* ランダム指名エリア（コンパクト化） */
         .random-box {
             background: #ffffff;
             border: 2px solid #3498db;
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 12px;
             text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
         .selected-display {
-            font-size: 32px;
+            font-size: 26px;
             font-weight: bold;
             color: #2c3e50;
-            min-height: 48px;
+            min-height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
         .pick-btn {
             background-color: #3498db;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
+            width: 100%;
             transition: background-color 0.2s;
-            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
-        }
-        .pick-btn:hover {
-            background-color: #2980b9;
         }
         .pick-btn:active {
-            transform: translateY(1px);
+            background-color: #2980b9;
         }
 
-        /* 管理バー */
+        /* 管理バー（コンパクト化） */
         .header-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             background: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .counter {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             color: #34495e;
         }
@@ -79,56 +70,50 @@
             background-color: #e74c3c;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .reset-btn:hover {
-            background-color: #c0392b;
         }
 
-        /* 生徒リスト */
+        /* 生徒リスト（コンパクトな格子状配置） */
         .student-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
         }
         .student-card {
             background: white;
-            padding: 12px 15px;
-            border-radius: 8px;
+            padding: 8px 10px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             cursor: pointer;
             user-select: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-            border-left: 4px solid #3498db;
-        }
-        .student-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-left: 3px solid #3498db;
         }
         .student-card input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-right: 12px;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
             cursor: pointer;
         }
         .student-name {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: #2c3e50;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* 指名済みのスタイル */
         .student-card.checked {
             background-color: #e0e0e0;
             border-left-color: #95a5a6;
-            opacity: 0.6;
+            opacity: 0.5;
         }
         .student-card.checked .student-name {
             text-decoration: line-through;
@@ -138,11 +123,9 @@
 </head>
 <body>
 
-    <h1>🇮🇩 指名チェック</h1>
-
     <!-- ランダム指名エリア -->
     <div class="random-box">
-        <div class="selected-display" id="selectedDisplay">🎲 ボタンを押してください</div>
+        <div class="selected-display" id="selectedDisplay">🎲 タップして指名</div>
         <button class="pick-btn" onclick="pickRandomStudent()">ランダムで指名する</button>
     </div>
 
@@ -152,7 +135,7 @@
         <button class="reset-btn" onclick="resetAll()">一括リセット</button>
     </div>
 
-    <!-- 生徒一覧 -->
+    <!-- 生徒一覧（2列でコンパクト表示） -->
     <div class="student-list" id="studentList">
         <!-- 生徒データ -->
     </div>
@@ -219,7 +202,6 @@
 
         // 瞬時にランダム指名する機能
         function pickRandomStudent() {
-            // まだ指名されていない生徒のインデックスを取得
             const remainingIndices = [];
             students.forEach((_, index) => {
                 const checkbox = document.getElementById(`check-${index}`);
@@ -228,20 +210,16 @@
                 }
             });
 
-            // 全員指名済みの場合
             if (remainingIndices.length === 0) {
                 display.innerText = "🎉 全員指名しました！";
                 return;
             }
 
-            // 瞬時に1人を選択
             const finalIndex = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
             const chosen = students[finalIndex];
             
-            // 画面に即座に表示
             display.innerText = `🎯 ${chosen.num}. ${chosen.name}`;
             
-            // 自動的にチェックを入れる
             const checkbox = document.getElementById(`check-${finalIndex}`);
             checkbox.checked = true;
             toggleCheck(finalIndex);
@@ -261,7 +239,7 @@
             checkboxes.forEach(cb => cb.checked = false);
             cards.forEach(card => card.classList.remove('checked'));
             
-            display.innerText = "🎲 ボタンを押してください";
+            display.innerText = "🎲 タップして指名";
             updateCounter();
         }
 
