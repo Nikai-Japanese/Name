@@ -93,7 +93,8 @@
         }
         .student-card {
             background: white;
-            padding: 8px 10px;
+            /* 縦幅を約1.5倍に拡張（上下の余白を大きくしています） */
+            padding: 14px 10px;
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -108,10 +109,11 @@
             display: flex;
             align-items: center;
             overflow: hidden;
+            width: 100%;
         }
         .student-card input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             margin-right: 8px;
             cursor: pointer;
         }
@@ -124,19 +126,18 @@
             text-overflow: ellipsis;
         }
         
-        /* 欠席切り替えボタン（小さめ） */
+        /* 欠席切り替えボタン */
         .absent-btn {
             background: #ecf0f1;
             border: none;
-            padding: 4px 6px;
+            padding: 5px 8px;
             border-radius: 4px;
             font-size: 10px;
             color: #7f8c8d;
             cursor: pointer;
             font-weight: bold;
-        }
-        .absent-btn:hover {
-            background: #dbdhdh;
+            flex-shrink: 0;
+            margin-left: 5px;
         }
 
         /* 指名済みのスタイル */
@@ -212,14 +213,12 @@
         const listContainer = document.getElementById('studentList');
         const display = document.getElementById('selectedDisplay');
 
-        // 初期生成
         function renderStudents() {
             listContainer.innerHTML = '';
             students.forEach((s, index) => {
                 const card = document.createElement('div');
                 card.className = 'student-card';
                 card.id = `card-${index}`;
-                // カード本体をクリックすると「指名済み」のチェックが切り替わる
                 card.onclick = (e) => {
                     if (e.target.tagName !== 'BUTTON' && !card.classList.contains('absent')) {
                         toggleCheck(index);
@@ -238,10 +237,9 @@
             updateCounter();
         }
 
-        // チェック切り替え
         function toggleCheck(index) {
             const card = document.getElementById(`card-${index}`);
-            if (card.classList.contains('absent')) return; // 欠席なら無視
+            if (card.classList.contains('absent')) return;
 
             const checkbox = document.getElementById(`check-${index}`);
             checkbox.checked = !checkbox.checked;
@@ -254,7 +252,6 @@
             updateCounter();
         }
 
-        // 欠席（除外）の切り替え
         function toggleAbsent(index, event) {
             event.stopPropagation();
             const card = document.getElementById(`card-${index}`);
@@ -262,11 +259,9 @@
             const btn = document.getElementById(`absent-btn-${index}`);
 
             if (card.classList.contains('absent')) {
-                // 出席に戻す
                 card.classList.remove('absent');
                 btn.innerText = "欠席";
             } else {
-                // 欠席にする（強制的にチェックを外して無効化）
                 card.classList.add('absent');
                 card.classList.remove('checked');
                 checkbox.checked = false;
@@ -275,13 +270,11 @@
             updateCounter();
         }
 
-        // ランダム指名（欠席者とすでに当たった人を除外）
         function pickRandomStudent() {
             const remainingIndices = [];
             students.forEach((_, index) => {
                 const card = document.getElementById(`card-${index}`);
                 const checkbox = document.getElementById(`check-${index}`);
-                // 「欠席」ではなく、かつ「まだチェックが入っていない」人だけを対象にする
                 if (!card.classList.contains('absent') && !checkbox.checked) {
                     remainingIndices.push(index);
                 }
@@ -297,14 +290,12 @@
             
             display.innerText = `🎯 ${chosen.num}. ${chosen.name}`;
             
-            // チェックを入れる
             const checkbox = document.getElementById(`check-${finalIndex}`);
             checkbox.checked = true;
             document.getElementById(`card-${finalIndex}`).classList.add('checked');
             updateCounter();
         }
 
-        // カウント更新（欠席者を除いた人数で表示）
         function updateCounter() {
             let totalActive = 0;
             let checkedCount = 0;
@@ -324,13 +315,11 @@
             document.getElementById('counter').innerText = `指名済み: ${checkedCount} / ${totalActive} 名`;
         }
 
-        // 一括リセット
         function resetAll() {
             students.forEach((_, index) => {
                 const card = document.getElementById(`card-${index}`);
                 const checkbox = document.getElementById(`check-${index}`);
                 
-                // 欠席状態はそのまま保持しつつ、指名チェックだけをリセット
                 if (!card.classList.contains('absent')) {
                     checkbox.checked = false;
                     card.classList.remove('checked');
